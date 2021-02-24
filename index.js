@@ -1,6 +1,9 @@
-import { md } from "node-forge";
-const Sha512 = md.sha512;
-export class PrizesService {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.PrizesService = void 0;
+const forge = require("node-forge");
+const Sha512 = forge.md.sha512;
+class PrizesService {
     init(hash, prevDrawHash) {
         this.hash = hash;
         this.prevDrawHash = prevDrawHash;
@@ -75,4 +78,5 @@ export class PrizesService {
         this.prizes = prizes;
     }
 }
+exports.PrizesService = PrizesService;
 //# sourceMappingURL=index.js.map

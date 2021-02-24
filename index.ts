@@ -1,4 +1,4 @@
-import { md } from "node-forge";
+const forge = require("node-forge")
 export interface IPrizes {
     prizes: string[];
     moderno: string;
@@ -7,7 +7,7 @@ export interface IPrizes {
     refund: string;
     all?: string[];
 }
-const Sha512 = md.sha512;
+const Sha512 = forge.md.sha512;
 export class PrizesService {
     private prizes: string[];
     private hash: string;

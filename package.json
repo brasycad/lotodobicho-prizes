@@ -1,18 +1,27 @@
 {
   "name": "lotodobicho-prizes",
-  "version": "1.0.6",
+  "version": "1.0.10",
   "description": "Algorithm to obtain lotodobicho draw's prizes",
   "main": "index.js",
-  "scripts": {},
-  "author": "Jose Manuel Villar Alarcon",
+  "scripts": {
+    "tsc": "tsc -p tsconfig.json"
+  },
+  "author": "José Manuel Villar Alarcón",
   "license": "ISC",
   "dependencies": {
     "node-forge": "0.10.0",
-    "typescript": "^4.2.2"
+    "typescript": "4.0.3"
   },
   "keywords": [
     "deu no poste",
     "lotodobicho",
     "resultado do jogo do bicho"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brasycad/lotodobicho-prizes.git"
+  },
+  "devDependencies": {
+    "@types/node": "^14.14.31"
+  }
 }

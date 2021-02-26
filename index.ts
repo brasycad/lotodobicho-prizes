@@ -40,16 +40,12 @@ export class PrizesService {
         return sha512.digest().toHex();
     }
     private extract(): string[] {
-        const extractNumbersOfString = (str: string) => str.replace(/\D/g, "");
-        const stripped: string = extractNumbersOfString(this.drawHash);
-        const draw: string = stripped.substr(0, 20);
-        return [
-            draw.substr(0, 4),
-            draw.substr(4, 4),
-            draw.substr(8, 4),
-            draw.substr(12, 4),
-            draw.substr(16, 4)
-        ];
+        return [0, 1, 2, 3, 4].reduce((acum, index) => {
+            const stripped: string = this.drawHash.substr(13 * index, 13);
+            const val: number = parseInt(stripped, 16) / Math.pow(2, 52);
+            const num: number = Math.floor(val * 10000);
+            return [...acum, num.toString().padStart(4, "0")];
+        }, []);
     }
     private getModern(): string {
         const value = this.prizes

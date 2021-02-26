@@ -1,6 +1,6 @@
 {
   "name": "lotodobicho-prizes",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "Algorithm to obtain lotodobicho draw's prizes",
   "main": "index.js",
   "scripts": {

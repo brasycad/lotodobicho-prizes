@@ -24,16 +24,16 @@ prizes.init(hash, prevHash);
 console.log(prizes.parse);
 ```
 
-1. 5388
-2. 6627
-3. 9140
-4. 1589
-5. 7595
+1. 3267
+2. 9284
+3. 6640
+4. 2036
+5. 5574
 
-- Modern 0339
-- River 706
-- Skipped 13
-- Refund 9
+- Modern 6801
+- River 330
+- Skipped 17
+- Refund 1
 
 You can also get the hash corresponding to this draw
 

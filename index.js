@@ -31,16 +31,12 @@ class PrizesService {
         return sha512.digest().toHex();
     }
     extract() {
-        const extractNumbersOfString = (str) => str.replace(/\D/g, "");
-        const stripped = extractNumbersOfString(this.drawHash);
-        const draw = stripped.substr(0, 20);
-        return [
-            draw.substr(0, 4),
-            draw.substr(4, 4),
-            draw.substr(8, 4),
-            draw.substr(12, 4),
-            draw.substr(16, 4)
-        ];
+        return [0, 1, 2, 3, 4].reduce((acum, index) => {
+            const stripped = this.drawHash.substr(13 * index, 13);
+            const val = parseInt(stripped, 16) / Math.pow(2, 52);
+            const num = Math.floor(val * 10000);
+            return [...acum, num.toString().padStart(4, "0")];
+        }, []);
     }
     getModern() {
         const value = this.prizes

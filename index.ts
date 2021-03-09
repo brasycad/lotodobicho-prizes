@@ -83,3 +83,51 @@ export class PrizesService {
         this.prizes = prizes
     }
 }
+
+import { Observable, timer } from 'rxjs';
+import { filter, map, switchMap } from 'rxjs/operators';
+export interface IBlock {
+    hash: string,
+    height: number,
+    time: number
+}
+const exec = require('child_process').exec;
+
+export class GetBitcoinHash {
+    private lastBlock: IBlock
+    public getNextBitcoinHashOfTimestamp(draw_ts_miliseconds: number): Observable<IBlock> {
+        return timer(0, 1000)
+            .pipe(
+                switchMap(async () => {
+                    const nextHeight = this.lastBlock ? this.lastBlock.height + 1 : await this.Getblockcount()
+                    this.lastBlock = await this.getBlockByHeight(nextHeight)
+                    return this.lastBlock.time * 1000
+                }),
+                filter((ts_miliseconds: number) => ts_miliseconds > draw_ts_miliseconds),
+                map(() => this.lastBlock)
+            )
+    }
+    private async Getblockhash(height: number): Promise<string> {
+        return await this.request(this.curlCommand('getblockhash', height.toString()));
+    }
+    private async Getblock(hash: string): Promise<any> {
+        return await this.request(this.curlCommand('getblock', `"${hash}"`))
+    }
+    private async getBlockByHeight(height: number): Promise<IBlock> {
+        const hash: string = await this.Getblockhash(height)
+        const block = await this.Getblock(hash)
+        return block
+    }
+    private async Getblockcount(): Promise<number> {
+        return await this.request(this.curlCommand('getblockcount', ''))
+    }
+    private curlCommand(method: string, params: string): string {
+        return `curl --user ${process.env.BITCOIN_RPC_USER}:${process.env.BITCOIN_RPC_PASSWORD} --data-binary '{"jsonrpc": "1.0", "id":"curltest", "method": "${method}", "params": [${params}] }' -H 'content-type: text/plain;' ${process.env.BITCOIN_RPC_URL}:${process.env.BITCOIN_RPC_PORT}/`
+    }
+    private request(curlCommand: string): Promise<any> {
+        return new Promise(resolve => exec(curlCommand, (error, stdout) => {
+            const parsed = error ? error : JSON.parse(stdout)
+            resolve(parsed?.result);
+        }))
+    }
+}

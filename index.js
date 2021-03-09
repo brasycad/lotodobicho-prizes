@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PrizesService = void 0;
+exports.GetBitcoinHash = exports.PrizesService = void 0;
 const forge = require("node-forge");
 const Sha512 = forge.md.sha512;
 class PrizesService {
@@ -75,4 +75,41 @@ class PrizesService {
     }
 }
 exports.PrizesService = PrizesService;
+const rxjs_1 = require("rxjs");
+const operators_1 = require("rxjs/operators");
+const exec = require('child_process').exec;
+class GetBitcoinHash {
+    getNextBitcoinHashOfTimestamp(draw_ts_miliseconds) {
+        return rxjs_1.timer(0, 1000)
+            .pipe(operators_1.switchMap(async () => {
+            const nextHeight = this.lastBlock ? this.lastBlock.height + 1 : await this.Getblockcount();
+            this.lastBlock = await this.getBlockByHeight(nextHeight);
+            return this.lastBlock.time * 1000;
+        }), operators_1.filter((ts_miliseconds) => ts_miliseconds > draw_ts_miliseconds), operators_1.map(() => this.lastBlock));
+    }
+    async Getblockhash(height) {
+        return await this.request(this.curlCommand('getblockhash', height.toString()));
+    }
+    async Getblock(hash) {
+        return await this.request(this.curlCommand('getblock', `"${hash}"`));
+    }
+    async getBlockByHeight(height) {
+        const hash = await this.Getblockhash(height);
+        const block = await this.Getblock(hash);
+        return block;
+    }
+    async Getblockcount() {
+        return await this.request(this.curlCommand('getblockcount', ''));
+    }
+    curlCommand(method, params) {
+        return `curl --user ${process.env.BITCOIN_RPC_USER}:${process.env.BITCOIN_RPC_PASSWORD} --data-binary '{"jsonrpc": "1.0", "id":"curltest", "method": "${method}", "params": [${params}] }' -H 'content-type: text/plain;' ${process.env.BITCOIN_RPC_URL}:${process.env.BITCOIN_RPC_PORT}/`;
+    }
+    request(curlCommand) {
+        return new Promise(resolve => exec(curlCommand, (error, stdout) => {
+            const parsed = error ? error : JSON.parse(stdout);
+            resolve(parsed?.result);
+        }));
+    }
+}
+exports.GetBitcoinHash = GetBitcoinHash;
 //# sourceMappingURL=index.js.map

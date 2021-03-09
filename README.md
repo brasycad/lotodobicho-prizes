@@ -17,11 +17,34 @@ _28cbd85971335a926ab9f3fd66a15c334973984fa7dbdbacfa6688b8078a9a65d_
 Hash (64 bits) of the Bitcoin corresponding to timestamp 161313249616000 (**hash**):
 _0000000000000000000b1447caf58d6d13ff4afee003c06fcb1edb30e159580d_
 
+Example found on dir ./example/test.ts
+
 ```js
-import { PrizesService } from "lotodobicho-prizes";
-const prizes = new PrizesService();
-prizes.init(hash, prevHash);
-console.log(prizes.parse);
+import { Observable } from "rxjs";
+import { map } from "rxjs/operators";
+import {
+  GetBitcoinHash,
+  PrizesService,
+  IPrizes,
+  IBlock,
+} from "lotodobicho-prizes";
+
+const getBitcoinHash = new GetBitcoinHash();
+const prizesService = new PrizesService();
+export const getDrawPrizes = (
+  ts_draw: number,
+  prevDrawHash: string
+): Observable<IPrizes> => {
+  return getBitcoinHash.getNextBitcoinHashOfTimestamp(ts_draw).pipe(
+    map((block: IBlock) => prizesService.init(block.hash, prevDrawHash)),
+    tap(console.log)
+  );
+};
+const prevDrawHash =
+  "d57cbd9ef56e9bc773c9ad93a2131d2e3ab64acf54ed1466da21efdd145  b24328cbd85971335a926ab9f3fd66a15c334973984fa7dbdbacfa6688b8078a9a65d";
+
+const ts_draw = 1613249610000;
+getDrawPrizes(ts_draw, prevDrawHash).subscribe();
 ```
 
 1. 3267
@@ -38,7 +61,7 @@ console.log(prizes.parse);
 You can also get the hash corresponding to this draw
 
 ```js
-console.log(prizes.drawHash);
+console.log(prizesService.drawHash);
 ```
 
 _53a88ea66279eedacb1a4015b8a9fc7a59c577f3425161127a2f8eb2db0dab68b_ \
